@@ -216,8 +216,8 @@ MIT License - feel free to use this project as a reference or starting point.
 ## 📸 Screenshots
 
 
-![NPV Calculator Interface](./docs/screenshots/calculator.png)
-![Results and Chart View](./docs/screenshots/results.png)
+![NPV Calculator Interface](./docs/screenshots/Calculator.png)
+![Results and Chart View](./docs/screenshots/Results.png)
 
 ---
 
