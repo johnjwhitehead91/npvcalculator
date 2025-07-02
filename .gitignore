@@ -49,3 +49,8 @@ Thumbs.db
 *.zip
 *.tmp
 
+bin/
+obj/
+/packages/
+riderModule.iml
+/_ReSharper.Caches/

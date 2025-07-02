@@ -1,0 +1,22 @@
+@Npv_WebApi_HostAddress = https://localhost:7001
+
+### Calculate NPV
+POST {{Npv_WebApi_HostAddress}}/api/npv/calculate
+Content-Type: application/json
+Accept: application/json
+
+{
+  "cashFlows": [-1000, 300, 400, 500],
+  "lowerBoundDiscountRate": 10,
+  "upperBoundDiscountRate": 12,
+  "discountRateIncrement": 1
+}
+> {% // @name calculateNpv %}
+
+### Get NPV Results
+GET {{Npv_WebApi_HostAddress}}/api/npv/results/{{calculateNpv.response.body.calculationId}}
+Accept: application/json
+
+### Get NPV Status
+GET {{Npv_WebApi_HostAddress}}/api/npv/status/{{calculateNpv.response.body.calculationId}}
+Accept: application/json
