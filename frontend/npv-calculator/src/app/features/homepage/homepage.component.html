@@ -1,0 +1,47 @@
+<!-- Modern PrimeNG-only Homepage -->
+<div class="homepage-container">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1>Welcome to NPV Calculator</h1>
+      <p>Make informed investment decisions with our advanced Net Present Value calculator. Analyze cash flows,
+        visualize results, and export your reports with ease.</p>
+      <div class="hero-actions">
+        <p-button label="Start Calculating" icon="pi pi-calculator" styleClass="p-button-lg p-button-primary"
+                  (click)="startCalculating()"></p-button>
+        <p-button label="Watch Demo" icon="pi pi-play" styleClass="p-button-lg p-button-outlined"
+                  (click)="watchDemo()"></p-button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <h2>Features</h2>
+    <div class="features-list">
+      <p-card header="Multiple Discount Rates" styleClass="feature-card">
+        <ng-template pTemplate="content">
+          Calculate NPV across a range of discount rates with customizable increments.
+        </ng-template>
+      </p-card>
+      <p-card header="Real-time Visualization" styleClass="feature-card">
+        <ng-template pTemplate="content">
+          Interactive charts and graphs to visualize NPV trends and make data-driven decisions.
+        </ng-template>
+      </p-card>
+      <p-card header="Export Results" styleClass="feature-card">
+        <ng-template pTemplate="content">
+          Download your NPV calculations and charts in multiple formats for reporting and analysis.
+        </ng-template>
+      </p-card>
+    </div>
+  </section>
+
+  <!-- Call to Action Section -->
+  <section class="cta-section">
+    <h2>Ready to Calculate Your NPV?</h2>
+    <p>Start making informed investment decisions today with our powerful NPV calculator.</p>
+    <p-button label="Get Started Now" icon="pi pi-arrow-right" styleClass="p-button-lg p-button-success"
+              (click)="startCalculating()"></p-button>
+  </section>
+</div>

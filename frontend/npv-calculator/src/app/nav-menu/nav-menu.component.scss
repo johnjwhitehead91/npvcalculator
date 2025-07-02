@@ -1,0 +1,14 @@
+:host ::ng-deep .p-menubar {
+  border-radius: 0 0 1rem 1rem;
+  box-shadow: 0 2px 8px rgba(60, 60, 60, 0.04);
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+:host ::ng-deep .p-menubar .p-menuitem-link {
+  font-weight: 500;
+}
+
+:host ::ng-deep .p-menubar .p-menubar-root-list {
+  justify-content: center;
+}

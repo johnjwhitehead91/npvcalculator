@@ -1,0 +1,15 @@
+<p-card styleClass="m-4 p-6" [style]="{ padding: '20px' }">
+  <ng-template pTemplate="header">
+    <div class="p-3 text-center">
+      <h3 class="m-0">NPV Chart</h3>
+    </div>
+  </ng-template>
+
+  <div style="height: 400px;">
+    <p-chart
+      type="line"
+      [data]="chartData"
+      [options]="chartOptions">
+    </p-chart>
+  </div>
+</p-card>

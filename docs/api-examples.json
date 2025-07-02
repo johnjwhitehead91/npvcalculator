@@ -1,0 +1,55 @@
+{
+    "name": "NPV Calculator API Test Examples",
+    "examples": [
+      {
+        "name": "Basic Example (Assessment Requirements)",
+        "description": "Matches the GTreasury assessment: 1% to 15% in 0.25% increments",
+        "json": {
+          "cashFlows": [-10000, 3000, 4000, 5000],
+          "lowerBoundDiscountRate": 1.0,
+          "upperBoundDiscountRate": 15.0,
+          "discountRateIncrement": 0.25
+        }
+      },
+      {
+        "name": "Simple Single Cash Flow",
+        "description": "Test with one future cash flow",
+        "json": {
+          "cashFlows": [5000],
+          "lowerBoundDiscountRate": 1.0,
+          "upperBoundDiscountRate": 15.0,
+          "discountRateIncrement": 0.25
+        }
+      },
+      {
+        "name": "Small Range Test",
+        "description": "Quick test with fewer calculations",
+        "json": {
+          "cashFlows": [-1000, 500, 600],
+          "lowerBoundDiscountRate": 5.0,
+          "upperBoundDiscountRate": 10.0,
+          "discountRateIncrement": 1.0
+        }
+      },
+      {
+        "name": "Complex Project",
+        "description": "Multi-year project with varying cash flows",
+        "json": {
+          "cashFlows": [-50000, 10000, 15000, 20000, 25000, 12000],
+          "lowerBoundDiscountRate": 3.0,
+          "upperBoundDiscountRate": 12.0,
+          "discountRateIncrement": 0.5
+        }
+      },
+      {
+        "name": "High Precision Test",
+        "description": "Small increments for detailed analysis",
+        "json": {
+          "cashFlows": [-2000, 800, 900, 1000],
+          "lowerBoundDiscountRate": 8.0,
+          "upperBoundDiscountRate": 12.0,
+          "discountRateIncrement": 0.1
+        }
+      }
+    ]
+  }

@@ -1,0 +1,104 @@
+.npv-calculator-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background: #f6f8fa;
+  padding: 2rem 0;
+}
+
+.p-card.shadow-3 {
+  max-width: 700px;
+  min-width: 50rem;
+  width: 100%;
+  margin: 2rem auto 2rem auto;
+}
+
+.cash-flows-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cash-flow-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.add-cash-flow-btn {
+  margin-top: 2.5rem;
+}
+
+.mt-5 {
+  margin-top: 2rem !important;
+}
+
+.flex {
+  display: flex;
+}
+
+.justify-content-center {
+  justify-content: center;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.gap-3 {
+  gap: 1rem;
+}
+
+.p-5 {
+  padding: 2rem !important;
+}
+
+.npv-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #3f51b5;
+  margin: 0 0 1rem 0;
+  text-align: center;
+}
+
+.npv-section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #3f51b5;
+  margin: 0 0 1.5rem 0;
+  text-align: center;
+}
+
+.discount-rate-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.discount-rate-col {
+  flex: 1 1 200px;
+  min-width: 180px;
+}
+
+.discount-rate-col label {
+  display: block;
+  min-width: 120px;
+  text-align: left;
+  margin-bottom: 0.5rem;
+  white-space: nowrap;
+}
+
+.interest-rate-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.interest-rate-col {
+  flex: 1 1 200px;
+  min-width: 180px;
+}

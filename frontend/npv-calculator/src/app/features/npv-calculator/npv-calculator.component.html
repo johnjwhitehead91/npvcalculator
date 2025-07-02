@@ -1,0 +1,364 @@
+<!-- src/app/features/npv-calculator/npv-calculator.component.html -->
+<div class="npv-calculator-wrapper">
+  <div class="p-5">
+    <p-card styleClass="shadow-3" [style]="{ padding: '20px' }">
+      <ng-template pTemplate="header">
+        <div class="text-center p-4">
+          <h1 class="npv-title">NPV Calculator</h1>
+        </div>
+      </ng-template>
+
+      <!-- Error Message -->
+      <p-message
+        *ngIf="errorMessage"
+        severity="error"
+        [text]="errorMessage"
+        styleClass="mb-4">
+      </p-message>
+
+      <!-- Calculation Progress -->
+      <p-card *ngIf="isCalculating && calculationStatus" styleClass="mb-4 surface-50" [style]="{ padding: '20px' }">
+        <div class="flex align-items-center justify-content-between mb-3">
+          <span class="font-semibold text-primary">Calculating NPV...</span>
+          <p-tag
+            [value]="calculationStatus.progress + ' / ' + calculationStatus.totalCalculations"
+            severity="info">
+          </p-tag>
+        </div>
+        <p-progressBar
+          [value]="getProgressPercentage()"
+          [showValue]="true">
+        </p-progressBar>
+      </p-card>
+
+      <!-- NPV Form -->
+      <form [formGroup]="npvForm" (ngSubmit)="onSubmit()">
+        <!-- Cash Flows Section -->
+        <div class="mb-3">
+          <label class="block font-medium mb-2">Initial Investment ($)</label>
+          <p-inputNumber
+            formControlName="initialInvestment"
+            mode="currency" [showButtons]="true"
+            [step]="100"
+            currency="USD"
+            placeholder="Enter initial investment (negative for outflow)">
+          </p-inputNumber>
+        </div>
+        <div class="mb-5">
+          <h2 class="npv-section-title">Cash Flows</h2>
+          <div formArrayName="cashFlows" class="cash-flows-list">
+            <div *ngFor="let cashFlow of cashFlowsArray.controls; let i = index" class="cash-flow-row">
+              <label class="font-medium text-sm" style="width: 80px;">Period {{ i + 1 }}:</label>
+              <p-inputNumber
+                [formControlName]="i"
+                mode="currency"
+                currency="USD"
+                locale="en-US"
+                styleClass="flex-1"
+                placeholder="Enter cash flow">
+              </p-inputNumber>
+              <p-button
+                *ngIf="cashFlowsArray.length > 1"
+                icon="pi pi-trash"
+                severity="danger"
+                [text]="true"
+                (onClick)="removeCashFlow(i)"
+                pTooltip="Remove cash flow">
+              </p-button>
+            </div>
+          </div>
+          <div class="text-center mt-3 add-cash-flow-btn">
+            <p-button
+              label="Add Cash Flow"
+              icon="pi pi-plus"
+              severity="success"
+              [outlined]="true"
+              (onClick)="addCashFlow()">
+            </p-button>
+          </div>
+        </div>
+
+        <p-divider></p-divider>
+
+        <!-- Discount Rate Parameters -->
+        <div class="mb-5">
+          <h2 class="npv-section-title">Discount Rate Settings</h2>
+          <div class="discount-rate-row">
+            <div class="discount-rate-col">
+              <label class="block font-medium mb-2">Lower Bound (%)</label>
+              <p-inputNumber
+                formControlName="lowerBoundDiscountRate"
+                mode="decimal"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="2"
+                [min]="0"
+                [max]="100"
+                suffix="%"
+                styleClass="w-full"
+                [showButtons]="true">
+              </p-inputNumber>
+            </div>
+            <div class="discount-rate-col">
+              <label class="block font-medium mb-2">Upper Bound (%)</label>
+              <p-inputNumber
+                formControlName="upperBoundDiscountRate"
+                mode="decimal"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="2"
+                [min]="0"
+                [max]="100"
+                suffix="%"
+                styleClass="w-full"
+                [showButtons]="true">
+              </p-inputNumber>
+            </div>
+            <div class="discount-rate-col">
+              <label class="block font-medium mb-2">Increment (%)</label>
+              <p-inputNumber
+                formControlName="discountRateIncrement"
+                mode="decimal"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="2"
+                [min]="0.01"
+                [max]="10"
+                suffix="%"
+                styleClass="w-full"
+                [showButtons]="true"
+                [step]="0.25">
+              </p-inputNumber>
+            </div>
+          </div>
+        </div>
+
+        <p-divider></p-divider>
+
+        <!-- Form Actions -->
+        <div class="flex gap-3 justify-content-center">
+          <p-button
+            type="submit"
+            [label]="isCalculating ? 'Calculating...' : 'Calculate NPV'"
+            icon="pi pi-calculator"
+            [disabled]="!npvForm.valid || isCalculating"
+            [loading]="isCalculating"
+            styleClass="p-button-lg">
+          </p-button>
+          <p-button
+            type="button"
+            label="Reset"
+            icon="pi pi-refresh"
+            severity="secondary"
+            [outlined]="true"
+            (onClick)="resetForm()"
+            styleClass="p-button-lg">
+          </p-button>
+        </div>
+      </form>
+    </p-card>
+
+    <!-- Results Section -->
+    <p-card *ngIf="calculationResults" styleClass="mt-5 shadow-3" [style]="{ padding: '20px' }">
+      <ng-template pTemplate="header">
+        <div class="p-4 text-center">
+          <h2 class="npv-title">Calculation Results</h2>
+        </div>
+      </ng-template>
+
+      <!-- Results Table -->
+      <p-table
+        [value]="calculationResults.results"
+        [paginator]="true"
+        [rows]="10"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} results"
+        [tableStyle]="{'min-width': '50rem'}"
+        styleClass="mb-4">
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="period">
+              Period
+              <p-sortIcon field="period"></p-sortIcon>
+            </th>
+            <th pSortableColumn="discountRate">
+              Discount Rate (%)
+              <p-sortIcon field="discountRate"></p-sortIcon>
+            </th>
+            <th pSortableColumn="npv">
+              NPV
+              <p-sortIcon field="npv"></p-sortIcon>
+            </th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-result>
+          <tr>
+            <td class="text-center">{{ result.period }}</td>
+            <td class="text-center">{{ result.discountRate | number:'1.2-2' }}%</td>
+            <td class="text-center">
+              <span [ngClass]="{
+                'text-green-600': result.npv > 0,
+                'text-red-600': result.npv < 0,
+                'text-gray-600': result.npv === 0
+              }">
+                {{ result.npv | currency:'USD':'symbol':'1.2-2' }}
+              </span>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+      <!-- Investment Insights - Redesigned -->
+      <p-card styleClass="surface-0 border-1 border-200" [style]="{ padding: '20px' }">
+        <ng-template pTemplate="header">
+          <div class="bg-primary text-white p-4 text-center">
+            <h3 class="m-0 text-white font-semibold text-xl">
+              <i class="pi pi-chart-line mr-2"></i>
+              Investment Analysis
+            </h3>
+          </div>
+        </ng-template>
+
+        <div class="p-4">
+          <div class="grid">
+            <!-- Break-Even Rate Card -->
+            <div class="col-12 md:col-6 lg:col-3">
+              <div class="surface-card border-1 border-200 border-round p-4 h-full">
+                <div class="flex align-items-center justify-content-between mb-3">
+                  <div class="bg-blue-100 border-circle w-3rem h-3rem flex align-items-center justify-content-center">
+                    <i class="pi pi-percentage text-blue-600 text-xl"></i>
+                  </div>
+                  <p-tag value="IRR" severity="info" styleClass="text-xs"></p-tag>
+                </div>
+                <div class="text-900 font-medium text-sm mb-1">Break-Even Rate</div>
+                <div class="text-900 font-bold text-2xl mb-2">{{ getBreakEvenRate() }}</div>
+                <div class="text-600 text-sm">Rate where NPV = 0</div>
+              </div>
+            </div>
+
+            <!-- Investment Decision Card -->
+            <div class="col-12 md:col-6 lg:col-3">
+              <div class="surface-card border-1 border-200 border-round p-4 h-full">
+                <div class="flex align-items-center justify-content-between mb-3">
+                  <div [ngClass]="{
+                    'bg-green-100': getInvestmentDecision() === 'Generally Favorable',
+                    'bg-yellow-100': getInvestmentDecision() === 'Depends on Cost of Capital',
+                    'bg-red-100': getInvestmentDecision() === 'Not Recommended'
+                  }" class="border-circle w-3rem h-3rem flex align-items-center justify-content-center">
+                    <i [ngClass]="{
+                      'pi pi-check text-green-600': getInvestmentDecision() === 'Generally Favorable',
+                      'pi pi-exclamation-triangle text-yellow-600': getInvestmentDecision() === 'Depends on Cost of Capital',
+                      'pi pi-times text-red-600': getInvestmentDecision() === 'Not Recommended'
+                    }" class="text-xl"></i>
+                  </div>
+                  <p-tag
+                    [value]="getInvestmentDecision() === 'Generally Favorable' ? 'ACCEPT' :
+                            getInvestmentDecision() === 'Not Recommended' ? 'REJECT' : 'REVIEW'"
+                    [severity]="getInvestmentDecision() === 'Generally Favorable' ? 'success' :
+                               getInvestmentDecision() === 'Not Recommended' ? 'danger' : 'warning'"
+                    styleClass="text-xs">
+                  </p-tag>
+                </div>
+                <div class="text-900 font-medium text-sm mb-1">Investment Decision</div>
+                <div class="font-bold text-lg mb-2"
+                     [ngClass]="{
+                       'text-green-600': getInvestmentDecision() === 'Generally Favorable',
+                       'text-yellow-600': getInvestmentDecision() === 'Depends on Cost of Capital',
+                       'text-red-600': getInvestmentDecision() === 'Not Recommended'
+                     }">
+                  {{ getInvestmentDecision() }}
+                </div>
+                <div class="text-600 text-sm">Overall recommendation</div>
+              </div>
+            </div>
+
+            <!-- Highest NPV Card -->
+            <div class="col-12 md:col-6 lg:col-3">
+              <div class="surface-card border-1 border-200 border-round p-4 h-full">
+                <div class="flex align-items-center justify-content-between mb-3">
+                  <div class="bg-green-100 border-circle w-3rem h-3rem flex align-items-center justify-content-center">
+                    <i class="pi pi-arrow-up text-green-600 text-xl"></i>
+                  </div>
+                  <p-tag value="MAX" severity="success" styleClass="text-xs"></p-tag>
+                </div>
+                <div class="text-900 font-medium text-sm mb-1">Highest NPV</div>
+                <div class="text-green-600 font-bold text-2xl mb-2">
+                  {{ getHighestNPV() | currency:'USD':'symbol':'1.2-2' }}
+                </div>
+                <div class="text-600 text-sm">At lowest discount rate</div>
+              </div>
+            </div>
+
+            <!-- Lowest NPV Card -->
+            <div class="col-12 md:col-6 lg:col-3">
+              <div class="surface-card border-1 border-200 border-round p-4 h-full">
+                <div class="flex align-items-center justify-content-between mb-3">
+                  <div class="bg-red-100 border-circle w-3rem h-3rem flex align-items-center justify-content-center">
+                    <i class="pi pi-arrow-down text-red-600 text-xl"></i>
+                  </div>
+                  <p-tag value="MIN" severity="danger" styleClass="text-xs"></p-tag>
+                </div>
+                <div class="text-900 font-medium text-sm mb-1">Lowest NPV</div>
+                <div class="text-red-600 font-bold text-2xl mb-2">
+                  {{ getLowestNPV() | currency:'USD':'symbol':'1.2-2' }}
+                </div>
+                <div class="text-600 text-sm">At highest discount rate</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </p-card>
+      <p-divider></p-divider>
+      <!-- Chart -->
+      <div class="mt-6 mb-6">
+        <app-npv-chart [results]="calculationResults.results"></app-npv-chart>
+      </div>
+      <p-divider></p-divider>
+      <!-- Quick Actions & Export -->
+      <p-card styleClass="surface-0 border-1 border-200 mt-6" [style]="{ padding: '20px' }">
+        <ng-template pTemplate="header">
+          <div class="bg-surface-100 p-4 text-center border-bottom-1 border-200">
+            <h3 class="text-900 font-semibold text-xl m-0">
+              <i class="pi pi-cog mr-2"></i>
+              Actions
+            </h3>
+          </div>
+        </ng-template>
+
+        <div style="padding: 20px;">
+          <div class="flex gap-3 justify-content-center flex-wrap">
+            <p-button
+              label="Export to Excel"
+              icon="pi pi-file-excel"
+              severity="success"
+              [outlined]="true"
+              (onClick)="exportToExcel()">
+            </p-button>
+            <p-button
+              label="Save as PDF"
+              icon="pi pi-file-pdf"
+              severity="danger"
+              [outlined]="true"
+              (onClick)="exportToPDF()">
+            </p-button>
+            <p-button
+              label="New Calculation"
+              icon="pi pi-plus"
+              severity="primary"
+              (onClick)="resetForm()">
+            </p-button>
+          </div>
+
+          <div class="mt-4 text-center">
+            <small class="text-600">
+              Calculated {{ getResultsCount() }} scenarios from {{ getMinDiscountRate() | number:'1.2-2' }}%
+              to {{ getMaxDiscountRate() | number:'1.2-2' }}%
+              on {{ getCalculatedAt() | date:'short' }}
+            </small>
+          </div>
+        </div>
+      </p-card>
+    </p-card>
+  </div>
+</div>

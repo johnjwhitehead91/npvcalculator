@@ -1,0 +1,51 @@
+# Node/Angular
+node_modules/
+dist/
+.env
+.env.*
+
+# Angular build
+/frontend/npv-calculator/.angular/
+/frontend/npv-calculator/.vscode/
+/frontend/npv-calculator/public/
+/frontend/npv-calculator/coverage/
+/frontend/npv-calculator/.DS_Store
+/frontend/npv-calculator/.editorconfig
+
+# .NET
+**/bin/
+**/obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.vs/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# IDEs
+.idea/
+.vscode/
+*.sw?
+
+# Docker
+**/.dockerignore
+**/Dockerfile*
+
+# Test output
+/TestResults/
+
+# Misc
+*.tgz
+*.gz
+*.zip
+*.tmp
+

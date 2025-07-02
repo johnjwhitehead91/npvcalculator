@@ -1,0 +1,54 @@
+/* src/styles.scss */
+
+/* Use @use instead of @import for SCSS */
+@import "primeicons/primeicons.css";
+
+body {
+  font-family: var(--p-font-family, 'Inter', 'Helvetica Neue', Arial, sans-serif);
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Ensure proper styling hierarchy */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom utility classes */
+.transition-all {
+  transition: all 0.3s ease;
+}
+
+/* PrimeNG button customizations */
+.p-button {
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  &.p-button-lg {
+    padding: 12px 24px;
+    font-size: 1rem;
+  }
+}
+
+.text-success {
+  color: #22c55e !important;
+}
+
+.text-warning {
+  color: #f59e42 !important;
+}
+
+.text-danger {
+  color: #ef4444 !important;
+}
